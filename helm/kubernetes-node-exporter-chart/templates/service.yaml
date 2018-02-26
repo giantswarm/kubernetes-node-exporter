@@ -4,12 +4,12 @@ metadata:
   name: node-exporter
   namespace: kube-system
   labels:
-  app: node-exporter
+    app: node-exporter
   annotations:
-  prometheus.io/scrape: "true"
-  prometheus.io/scheme: "http"
+    prometheus.io/scrape: "true"
+    prometheus.io/scheme: "http"
 spec:
   ports:
   - port: 10300
   selector:
-  app: node-exporter
+    app: node-exporter
