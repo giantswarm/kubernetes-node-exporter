@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: node-exporter-psp
+  name: {{ .Values.name }}-psp
 spec:
   allowPrivilegeEscalation: true
   fsGroup:
