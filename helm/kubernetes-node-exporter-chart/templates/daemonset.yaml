@@ -1,18 +1,18 @@
 apiVersion: extensions/v1beta1
 kind: DaemonSet
 metadata:
-  name: node-exporter
-  namespace: kube-system
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
   labels:
-    app: node-exporter
+    app: {{ .Values.name }}
 spec:
   updateStrategy:
     type: RollingUpdate
   template:
     metadata:
-      name: node-exporter
+      name: {{ .Values.name }}
       labels:
-        app: node-exporter
+        app: {{ .Values.name }}
     spec:
       tolerations:
       # Tolerate master taint
@@ -20,11 +20,11 @@ spec:
         operator: Exists
         effect: NoSchedule
       containers:
-      - image: quay.io/giantswarm/node-exporter:v0.15.1
-        name: node-exporter
+      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        name: {{ .Values.name }}
         args:
         - '--log.level=debug'
-        - '--web.listen-address=:10300'
+        - '--web.listen-address=:{{ .Values.port }}'
         - '--collector.arp'
         - '--collector.bcache'
         - '--collector.conntrack'
@@ -56,22 +56,17 @@ spec:
         livenessProbe:
           httpGet:
             path: /
-            port: 10300
+            port: {{ .Values.port }}
           initialDelaySeconds: 5
           timeoutSeconds: 5
         readinessProbe:
           httpGet:
             path: /
-            port: 10300
+            port: {{ .Values.port }}
           initialDelaySeconds: 5
           timeoutSeconds: 5
         resources:
-          requests:
-            cpu: 55m
-            memory: 75Mi
-          limits:
-            cpu: 55m
-            memory: 75Mi
+{{ toYaml .Values.resources | indent 10 }}
         volumeMounts:
         - mountPath: /var/run/dbus/
           name: systemd-volume
@@ -79,6 +74,6 @@ spec:
       - name: systemd-volume
         hostPath:
           path: /var/run/dbus/
-      serviceAccountName: node-exporter
+      serviceAccountName: {{ .Values.name }}
       hostNetwork: true
       hostPID: true
