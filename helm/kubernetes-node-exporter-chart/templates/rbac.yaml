@@ -1,28 +1,28 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: node-exporter
-  namespace: kube-system
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
   labels:
-    app: node-exporter
+    app: {{ .Values.name }}
 subjects:
 - kind: ServiceAccount
-  name: node-exporter
-  namespace: kube-system
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
 roleRef:
   kind: Role
-  name: node-exporter
+  name: {{ .Values.name }} 
   apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: node-exporter
+  name: {{ .Values.name }} 
   namespace: kube-system
   labels:
-    app: node-exporter
+    app: {{ .Values.name }}
 rules:
 - apiGroups:     ['extensions']
   resources:     ['podsecuritypolicies']
-  resourceNames: ['node-exporter-psp']
+  resourceNames: ['{{ .Values.name }}']
   verbs:         ['use']
