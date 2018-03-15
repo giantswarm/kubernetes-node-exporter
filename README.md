@@ -19,11 +19,13 @@ Deployment to Guest Clusters will be handled by [chart-operator](https://github.
 
 ## Configuration
 
-| Parameter          | Description                                | Default                          |
-|--------------------|--------------------------------------------|----------------------------------|
-| `name`             | The name of the service                    | node-exporter                    |
-| `namespace`        | The namespaces the services runs in        | kube-system                      |
-| `image.repository` | The image repository to pull from          | quay.io/giantswarm/node-exporter |
-| `image.tag`        | The image tag to pull from                 | v0.15.1                          |
-| `port`             | The port of the container                  | 10300                            |
-| `resources`        | node-exporter resource requests and limits | cpu:55m  - memory:75Mi           |
+| Parameter               | Description                                | Default                             |
+|-------------------------|--------------------------------------------|-------------------------------------|
+| `name`                  | The name of the service                    | `node-exporter`                     |
+| `namespace`             | The namespaces the services runs in        | `kube-system`                       |
+| `image.repository`      | The image repository to pull from          | `quay.io/giantswarm/node-exporter`  |
+| `image.tag`             | The image tag to pull from                 | `v0.15.1`                           |
+| `port`                  | The port of the container                  | `10300`                             |
+| `resources`             | node-exporter resource requests and limits | `cpu:55m - memory:75Mi`             |
+| `test.image.repository` | The test image repository to pull from     | `quay.io/giantswarm/alpine-testing` |
+| `test.image.tag`        | The test image tag to pull from            | `0.1.0`                             |

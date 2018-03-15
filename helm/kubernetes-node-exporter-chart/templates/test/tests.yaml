@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.name }}-tests
+data:
+  run.sh: |-
+    @test "Testing metrics are up" {
+        curl --connect-timeout 10 --retry 12 --retry-delay 10 {{ .Values.name }}.{{ .Values.namespace }}:{{ .Values.port }}/metrics | \
+        grep systemd.*docker.service.*active.*1
+    }
