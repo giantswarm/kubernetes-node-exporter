@@ -15,7 +15,7 @@ $ cd kubernetes-node-exporter
 $ helm install kubernetes-node-exporter/helm/kubernetes-node-exporter-chart
 ```
 
-Deployment to Guest Clusters will be handled by [chart-operator](https://github.com/giantswarm/chart-operator)
+Deployment to Guest Clusters will be handled by [chart-operator](https://github.com/giantswarm/chart-operator).
 
 ## Configuration
 
