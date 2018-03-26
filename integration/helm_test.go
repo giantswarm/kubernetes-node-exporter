@@ -47,8 +47,6 @@ func TestHelm(t *testing.T) {
 		t.Errorf("unexpected error during installation of the chart: %v", err)
 	}
 
-	err = framework.runCmd("wait 5")
-
 	err = framework.HelmCmd("test --debug --cleanup test-deploy")
 	if err != nil {
 		t.Errorf("unexpected error during test of the chart %v:", err)
