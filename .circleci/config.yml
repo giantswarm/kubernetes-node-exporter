@@ -14,7 +14,7 @@ e2eTest: &e2eTest
 
     - run: ./e2e-harness setup --remote=false
 
-    - run: ./e2e-harness test --test-dir=integration
+    - run: ./e2e-harness test
 
     - run:
         name: Finish with cleanup, no matter if the test succeeded or not
