@@ -42,9 +42,14 @@ func TestMain(m *testing.M) {
 }
 
 func TestHelm(t *testing.T) {
-	err := framework.HelmCmd("registry install quay.io/giantswarm/kubernetes-node-exporter-chart")
+	err := framework.HelmCmd("registry install quay.io/giantswarm/kubernetes-node-exporter-chart -n test-deploy")
 	if err != nil {
-		t.Errorf("unexpected error during installation of the chart %v", err)
+		t.Errorf("unexpected error during installation of the chart: %v", err)
+	}
+
+	err := framework.HelmCmd("test --debug --cleanup test-deploy")
+	if err != nil {
+		t.Errorf("unexpected error during test of the chart %v:", err)
 	}
 
 }
