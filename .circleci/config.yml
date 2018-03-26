@@ -16,10 +16,10 @@ e2eTest: &e2eTest
 
     - run: ./e2e-harness test
 
-    - run:
-        name: Finish with cleanup, no matter if the test succeeded or not
-        command: ./e2e-harness teardown
-        when: always
+    # - run:
+    #     name: Finish with cleanup, no matter if the test succeeded or not
+    #     command: ./e2e-harness teardown
+    #     when: always
 
 version: 2
 jobs:
