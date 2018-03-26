@@ -42,8 +42,6 @@ func TestMain(m *testing.M) {
 }
 
 func TestHelm(t *testing.T) {
-	log.Printf("Testing")
-
 	err := framework.HelmCmd("install quay.io/giantswarm/kubernetes-node-exporter-chart")
 	if err != nil {
 		t.Errorf("unexpected error during installation of the chart %v", err)
