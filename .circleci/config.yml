@@ -58,17 +58,7 @@ workflows:
     jobs:
       - build
 
-      - hold:
-          type: approval
-          filters:
-            branches:
-              ignore: master
-          requires:
-          - build
-
-      - e2eTestPR:
-          requires:
-          - hold
+      - e2eTestPR
 
       - e2eTestMaster:
           filters:
