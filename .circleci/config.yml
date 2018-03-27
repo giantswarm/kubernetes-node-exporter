@@ -58,7 +58,9 @@ workflows:
     jobs:
       - build
 
-      - e2eTestPR
+      - e2eTestPR:
+          requires:
+          - build
 
       - e2eTestMaster:
           filters:
