@@ -54,6 +54,8 @@ jobs:
 
     - run: ./architect deploy
 
+    - run: ./architect publish --channels "beta"
+
 workflows:
   version: 2
   build_e2e:
