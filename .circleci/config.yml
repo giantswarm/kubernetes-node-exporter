@@ -39,6 +39,8 @@ jobs:
 
     - run: ./architect build
 
+    - run: ./architect publish --chart "testing"
+
   e2eTestPR:
     <<: *e2eTest
 
