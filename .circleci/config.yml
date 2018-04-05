@@ -14,7 +14,7 @@ jobs:
 
     - run: ./architect build
 
-    - run: ./architect publish --pipeline=false --channels testing
+    - run: ./architect publish --pipeline=false --channels ${CIRCLE_SHA1}
 
   e2eTest:
     machine: true
