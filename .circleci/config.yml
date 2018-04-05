@@ -14,7 +14,9 @@ jobs:
 
     - run: ./architect build
 
-    - run: ./architect publish --pipeline=false --channels ${CIRCLE_SHA1}
+    - run:
+        name: Publish chart to CNR using a temporary channel for testing
+        command: ./architect publish --pipeline=false --channels ${CIRCLE_SHA1}
 
   e2eTest:
     machine: true
@@ -41,7 +43,16 @@ jobs:
         command: ./e2e-harness teardown
         when: always
 
-    - run: ./architect publish
+  deploy:
+    machine: true
+    steps:
+    - checkout
+
+    - run: ./architect deploy
+
+    - run:
+        name: Publish chart to beta channel on CNR
+        command: ./architect publish
 
 workflows:
   version: 2
