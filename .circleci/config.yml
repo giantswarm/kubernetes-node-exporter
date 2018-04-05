@@ -1,4 +1,22 @@
-e2eTest: &e2eTest
+version: 2
+jobs:
+  build:
+    machine: true
+    steps:
+    - checkout
+
+    - run:
+        name: Get architect binary
+        command: |
+          wget -q $(curl -sS -H "Authorization: token $RELEASE_TOKEN" https://api.github.com/repos/giantswarm/architect/releases/latest | grep browser_download_url | head -n 1 | cut -d '"' -f 4)
+          chmod +x ./architect
+          ./architect version
+
+    - run: ./architect build
+
+    - run: ./architect publish --pipeline=false --channels testing
+
+  e2eTest:
     machine: true
     working_directory: /home/circleci/.go_workspace/src/github.com/giantswarm/kubernetes-node-exporter
     steps:
@@ -23,38 +41,7 @@ e2eTest: &e2eTest
         command: ./e2e-harness teardown
         when: always
 
-version: 2
-jobs:
-  build:
-    machine: true
-    steps:
-    - checkout
-
-    - run:
-        name: Get architect binary
-        command: |
-          wget -q $(curl -sS -H "Authorization: token $RELEASE_TOKEN" https://api.github.com/repos/giantswarm/architect/releases/latest | grep browser_download_url | head -n 1 | cut -d '"' -f 4)
-          chmod +x ./architect
-          ./architect version
-
-    - run: ./architect build
-
-    - run: ./architect publish --channels "testing"
-
-  e2eTestPR:
-    <<: *e2eTest
-
-  e2eTestMaster:
-    <<: *e2eTest
-
-  deploy:
-    machine: true
-    steps:
-    - checkout
-
-    - run: ./architect deploy
-
-    - run: ./architect publish --channels "beta"
+    - run: ./architect publish
 
 workflows:
   version: 2
@@ -62,14 +49,7 @@ workflows:
     jobs:
       - build
 
-      - e2eTestPR:
-          requires:
-          - build
-
-      - e2eTestMaster:
-          filters:
-            branches:
-              only: master
+      - e2eTest:
           requires:
           - build
 
@@ -78,4 +58,4 @@ workflows:
             branches:
               only: master
           requires:
-          - e2eTestMaster
+          - e2eTest
