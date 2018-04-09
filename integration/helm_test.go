@@ -3,6 +3,7 @@
 package integration
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"testing"
@@ -42,7 +43,9 @@ func TestMain(m *testing.M) {
 }
 
 func TestHelm(t *testing.T) {
-	err := framework.HelmCmd("registry install quay.io/giantswarm/kubernetes-node-exporter-chart -n test-deploy")
+	channel := os.Getenv("CIRCLE_SHA1")
+
+	err := framework.HelmCmd(fmt.Sprintf("registry install quay.io/giantswarm/kubernetes-node-exporter-chart:%s -n test-deploy", channel))
 	if err != nil {
 		t.Errorf("unexpected error during installation of the chart: %v", err)
 	}
