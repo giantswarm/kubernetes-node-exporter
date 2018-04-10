@@ -16,7 +16,7 @@ jobs:
 
     - run:
         name: Publish chart to CNR using a temporary channel for testing
-        command: ./architect publish --pipeline=false --channels ${CIRCLE_SHA1}
+        command: ./architect publish --pipeline=false --channels=${CIRCLE_SHA1}
 
   e2eTest:
     machine: true
