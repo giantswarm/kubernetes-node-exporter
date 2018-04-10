@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cenkalti/backoff"
 	"github.com/giantswarm/apiextensions/pkg/apis/provider/v1alpha1"
 	giantclientset "github.com/giantswarm/apiextensions/pkg/clientset/versioned"
 	"github.com/giantswarm/microerror"
@@ -30,42 +31,21 @@ type PatchSpec struct {
 	Value interface{} `json:"value"`
 }
 
-const (
-	certOperatorValuesFile = "/tmp/cert-operator-values.yaml"
-	// certOperatorChartValues values required by cert-operator-chart, the environment
-	// variables will be expanded before writing the contents to a file.
-	certOperatorChartValues = `commonDomain: ${COMMON_DOMAIN_GUEST}
-clusterName: ${CLUSTER_NAME}
-Installation:
-  V1:
-    Auth:
-      Vault:
-        Address: http://vault.default.svc.cluster.local:8200
-        CA:
-          TTL: 1440h
-    Guest:
-      Kubernetes:
-        API:
-          EndpointBase: ${COMMON_DOMAIN_GUEST}
-    Secret:
-      CertOperator:
-        SecretYaml: |
-          service:
-            vault:
-              config:
-                token: ${VAULT_TOKEN}
-      Registry:
-        PullSecret:
-          DockerConfigJSON: "{\"auths\":{\"quay.io\":{\"auth\":\"$REGISTRY_PULL_SECRET\"}}}"
-`
-)
+type HostConfig struct {
+	Backoff *backoff.ExponentialBackOff
+}
 
 type Host struct {
+	backoff   *backoff.ExponentialBackOff
 	g8sClient *giantclientset.Clientset
 	k8sClient kubernetes.Interface
 }
 
-func NewHost() (*Host, error) {
+func NewHost(c HostConfig) (*Host, error) {
+	if c.Backoff == nil {
+		c.Backoff = newCustomExponentialBackoff()
+	}
+
 	config, err := clientcmd.BuildConfigFromFlags("", harness.DefaultKubeConfig)
 	if err != nil {
 		return nil, microerror.Mask(err)
@@ -81,6 +61,7 @@ func NewHost() (*Host, error) {
 	}
 
 	h := &Host{
+		backoff:   c.Backoff,
 		g8sClient: g8sClient,
 		k8sClient: k8sClient,
 	}
@@ -118,54 +99,72 @@ func (h *Host) AWSCluster(name string) (*v1alpha1.AWSConfig, error) {
 	return cluster, nil
 }
 
-func (h *Host) DeleteGuestCluster() error {
-	if err := runCmd("kubectl delete awsconfig ${CLUSTER_NAME}"); err != nil {
+func (h *Host) DeleteGuestCluster(name, cr, logEntry string) error {
+	if err := runCmd(fmt.Sprintf("kubectl delete %s ${CLUSTER_NAME}", cr)); err != nil {
 		return microerror.Mask(err)
 	}
 
-	operatorPodName, err := h.PodName("giantswarm", "app=aws-operator")
+	operatorPodName, err := h.PodName("giantswarm", fmt.Sprintf("app=%s", name))
 	if err != nil {
 		return microerror.Mask(err)
 	}
 
-	logEntry := "deleted the guest cluster main stack"
-
 	return h.WaitForPodLog("giantswarm", logEntry, operatorPodName)
 }
 
-func (h *Host) InstallAwsOperator(values string) error {
-	awsOperatorChartValuesEnv := os.ExpandEnv(values)
+func (h *Host) InstallStableOperator(name, cr, values string) error {
+	err := h.InstallOperator(name, cr, values, ":stable")
+	if err != nil {
+		return microerror.Mask(err)
+	}
+	return nil
+}
 
-	tmpfile, err := ioutil.TempFile("", "aws-operator-values")
+func (h *Host) InstallBranchOperator(name, cr, values string) error {
+	err := h.InstallOperator(name, cr, values, "@1.0.0-${CIRCLE_SHA1}")
+	if err != nil {
+		return microerror.Mask(err)
+	}
+	return nil
+}
+
+func (h *Host) InstallOperator(name, cr, values, version string) error {
+	chartValuesEnv := os.ExpandEnv(values)
+
+	tmpfile, err := ioutil.TempFile("", name+"-values")
 	if err != nil {
 		return microerror.Mask(err)
 	}
 	defer os.Remove(tmpfile.Name())
 
-	if _, err := tmpfile.Write([]byte(awsOperatorChartValuesEnv)); err != nil {
-		return microerror.Mask(err)
-	}
-	if err := runCmd("helm registry install quay.io/giantswarm/aws-operator-chart@1.0.0-${CIRCLE_SHA1} -- -n aws-operator --values " + tmpfile.Name()); err != nil {
+	if _, err := tmpfile.Write([]byte(chartValuesEnv)); err != nil {
 		return microerror.Mask(err)
 	}
 
-	return waitFor(h.crd("awsconfig"))
-}
-
-func (h *Host) InstallCertOperator() error {
-	certOperatorChartValuesEnv := os.ExpandEnv(certOperatorChartValues)
-	if err := ioutil.WriteFile(certOperatorValuesFile, []byte(certOperatorChartValuesEnv), os.ModePerm); err != nil {
-		return microerror.Mask(err)
+	cmd := fmt.Sprintf("registry install quay.io/giantswarm/%[1]s-chart%[2]s -- -n %[1]s --values %[3]s", name, version, tmpfile.Name())
+	operation := func() error {
+		return HelmCmd(cmd)
 	}
-	if err := runCmd("helm registry install quay.io/giantswarm/cert-operator-chart:stable -- -n cert-operator --values " + certOperatorValuesFile); err != nil {
+	notify := newNotify(name + "-chart install")
+	err = backoff.RetryNotify(operation, h.backoff, notify)
+	if err != nil {
 		return microerror.Mask(err)
 	}
 
-	return waitFor(h.crd("certconfig"))
+	err = waitFor(h.crd(cr))
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	return nil
 }
 
 func (h *Host) InstallCertResource() error {
-	err := runCmd("helm registry install quay.io/giantswarm/cert-resource-lab-chart:stable -- -n cert-resource-lab --set commonDomain=${COMMON_DOMAIN_GUEST} --set clusterName=${CLUSTER_NAME}")
+	operation := func() error {
+		return HelmCmd("registry install quay.io/giantswarm/cert-resource-lab-chart:stable -- -n cert-resource-lab --set commonDomain=${COMMON_DOMAIN_GUEST} --set clusterName=${CLUSTER_NAME}")
+	}
+	notify := newNotify("cert-resource-lab-chart install")
+	err := backoff.RetryNotify(operation, h.backoff, notify)
 	if err != nil {
 		return microerror.Mask(err)
 	}
@@ -173,34 +172,6 @@ func (h *Host) InstallCertResource() error {
 	secretName := fmt.Sprintf("%s-api", os.Getenv("CLUSTER_NAME"))
 	log.Printf("waiting for secret %v\n", secretName)
 	return waitFor(h.secret("default", secretName))
-}
-
-func (h *Host) InstallNodeOperator(values string) error {
-	var err error
-
-	nodeOperatorChartValuesEnv := os.ExpandEnv(values)
-
-	tmpfile, err := ioutil.TempFile("", "node-operator-values")
-	if err != nil {
-		return microerror.Mask(err)
-	}
-	defer os.Remove(tmpfile.Name())
-
-	if _, err := tmpfile.Write([]byte(nodeOperatorChartValuesEnv)); err != nil {
-		return microerror.Mask(err)
-	}
-
-	err = runCmd("helm registry install quay.io/giantswarm/node-operator-chart:stable -- -n node-operator --values " + tmpfile.Name())
-	if err != nil {
-		return microerror.Mask(err)
-	}
-
-	err = waitFor(h.crd("nodeconfig"))
-	if err != nil {
-		return microerror.Mask(err)
-	}
-
-	return nil
 }
 
 func (h *Host) PodName(namespace, labelSelector string) (string, error) {
@@ -223,7 +194,7 @@ func (h *Host) PodName(namespace, labelSelector string) (string, error) {
 }
 
 func (h *Host) Setup() error {
-	if err := h.createGSNamespace(); err != nil {
+	if err := h.CreateNamespace("giantswarm"); err != nil {
 		return microerror.Mask(err)
 	}
 
@@ -235,7 +206,7 @@ func (h *Host) Setup() error {
 }
 
 func (h *Host) Teardown() {
-	runCmd("helm delete vault --purge")
+	HelmCmd("delete vault --purge")
 	h.k8sClient.CoreV1().
 		Namespaces().
 		Delete("giantswarm", &metav1.DeleteOptions{})
@@ -291,18 +262,18 @@ func (h *Host) crd(crdName string) func() error {
 	}
 }
 
-func (h *Host) createGSNamespace() error {
+func (h *Host) CreateNamespace(ns string) error {
 	// check if the namespace already exists
 	_, err := h.k8sClient.CoreV1().
 		Namespaces().
-		Get("giantswarm", metav1.GetOptions{})
+		Get(ns, metav1.GetOptions{})
 	if err == nil {
 		return nil
 	}
 
 	namespace := &v1.Namespace{
 		ObjectMeta: metav1.ObjectMeta{
-			Name: "giantswarm",
+			Name: ns,
 		},
 	}
 	_, err = h.k8sClient.CoreV1().
@@ -315,7 +286,7 @@ func (h *Host) createGSNamespace() error {
 	activeNamespace := func() error {
 		ns, err := h.k8sClient.CoreV1().
 			Namespaces().
-			Get("giantswarm", metav1.GetOptions{})
+			Get(ns, metav1.GetOptions{})
 
 		if err != nil {
 			return microerror.Mask(err)
@@ -333,7 +304,12 @@ func (h *Host) createGSNamespace() error {
 }
 
 func (h *Host) installVault() error {
-	if err := runCmd("helm registry install quay.io/giantswarm/vaultlab-chart:stable -- --set vaultToken=${VAULT_TOKEN} -n vault"); err != nil {
+	operation := func() error {
+		return HelmCmd("registry install quay.io/giantswarm/vaultlab-chart:stable -- --set vaultToken=${VAULT_TOKEN} -n vault")
+	}
+	notify := newNotify("vaultlab-chart install")
+	err := backoff.RetryNotify(operation, h.backoff, notify)
+	if err != nil {
 		return microerror.Mask(err)
 	}
 
