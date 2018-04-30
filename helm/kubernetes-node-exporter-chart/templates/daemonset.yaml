@@ -24,6 +24,9 @@ spec:
       containers:
       - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         name: {{ .Values.name }}
+        ports:
+        - name: metrics
+          containerPort: {{ .Values.port }}
         args:
         - '--log.level=debug'
         - '--web.listen-address=:{{ .Values.port }}'
