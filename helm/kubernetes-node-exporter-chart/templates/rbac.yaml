@@ -5,6 +5,7 @@ metadata:
   namespace: {{ .Values.namespace }}
   labels:
     app: {{ .Values.name }}
+    giantswarm.io/service-type: "managed"
 subjects:
 - kind: ServiceAccount
   name: {{ .Values.name }}

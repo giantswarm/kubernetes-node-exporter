@@ -2,6 +2,9 @@ apiVersion: extensions/v1beta1
 kind: PodSecurityPolicy
 metadata:
   name: {{ .Values.name }}
+  labels:
+    app: {{ .Values.name }}
+    giantswarm.io/service-type: "managed"
 spec:
   allowPrivilegeEscalation: true
   fsGroup:
