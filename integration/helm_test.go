@@ -49,7 +49,7 @@ func TestHelm(t *testing.T) {
 	if err != nil {
 		t.Errorf("unexpected error during installation of the chart: %v", err)
 	}
-	defer framework.HelmCmd("registry delete test-deploy --purge")
+	defer framework.HelmCmd("delete test-deploy --purge")
 
 	err = framework.HelmCmd("test --debug --cleanup test-deploy")
 	if err != nil {
