@@ -6,6 +6,9 @@ metadata:
   labels:
     app: node-exporter
 spec:
+  ports:
+  - name: metrics
+    port: 10300
   selector:
     app: node-exporter
 ---
@@ -25,8 +28,6 @@ metadata:
   labels:
     app: node-exporter
 spec:
-  updateStrategy:
-    type: RollingUpdate
   template:
     metadata:
       name: node-exporter
@@ -36,7 +37,6 @@ spec:
       containers:
       - image: quay.io/giantswarm/node-exporter:v0.15.1
         name: node-exporter
-      serviceAccountName: node-exporter
 ---
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -61,9 +61,3 @@ metadata:
   namespace: kube-system
   labels:
     app: node-exporter
-rules:
-- apiGroups: ['extensions']
-  resources: ['podsecuritypolicies']
-  verbs:     ['use']
-  resourceNames:
-  - privileged
