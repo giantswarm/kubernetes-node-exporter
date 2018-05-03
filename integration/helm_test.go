@@ -49,9 +49,21 @@ func TestHelm(t *testing.T) {
 	if err != nil {
 		t.Errorf("unexpected error during installation of the chart: %v", err)
 	}
+	defer framework.HelmCmd("registry delete test-deploy --purge")
 
 	err = framework.HelmCmd("test --debug --cleanup test-deploy")
 	if err != nil {
 		t.Errorf("unexpected error during test of the chart: %v", err)
 	}
+}
+
+func TestMigration(t *testing.T) {
+	// install resources
+
+	// check they are installed
+
+	// install kubernetes-node-exporter-chart
+
+	// check that resources are no longer there
+
 }
