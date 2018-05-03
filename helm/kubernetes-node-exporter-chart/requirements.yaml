@@ -1,0 +1,4 @@
+appr:
+- name: quay.io/giantswarm/kubernetes-node-exporter-migration-chart
+  repository: appr://
+  version: ':0-1-beta'
