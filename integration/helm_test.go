@@ -59,11 +59,35 @@ func TestHelm(t *testing.T) {
 
 func TestMigration(t *testing.T) {
 	// install resources
+	err := framework.HelmCmd("install /e2e/fixtures/resources-chart -n resources")
+	if err != nil {
+		t.Fatalf("could not install resources chart: %v", err)
+	}
 
 	// check they are installed
+	err = checkResourcesInstalled()
+	if err != nil {
+		t.Fatalf("could check installed resources: %v", err)
+	}
 
 	// install kubernetes-node-exporter-chart
+	channel := os.Getenv("CIRCLE_SHA1")
+	err = framework.HelmCmd(fmt.Sprintf("registry install --wait quay.io/giantswarm/kubernetes-node-exporter-chart:%s -n test-deploy", channel))
+	if err != nil {
+		t.Fatalf("could not install kubernetes-node-exporter-chart: %v", err)
+	}
 
 	// check that resources are no longer there
+	err = checkResourcesRemoved()
+	if err != nil {
+		t.Fatalf("could check removed resources: %v", err)
+	}
+}
 
+func checkResourcesInstalled() error {
+	return nil
+}
+
+func checkResourcesRemoved() error {
+	return nil
 }
