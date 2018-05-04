@@ -11,11 +11,11 @@ rules:
 - apiGroups:
   - ""
   resources:
-  - clusterrole
-  - clusterrolebinding
-  - deployment
-  - service
-  - serviceaccount
+  - clusterroles
+  - clusterrolebindings
+  - deployments
+  - services
+  - serviceaccounts
   verbs:
   - "get"
   - "delete"
