@@ -5,12 +5,14 @@ metadata:
   namespace: kube-system
   labels:
     app: node-exporter
+    kind: legacy
 spec:
   ports:
   - name: metrics
     port: 10300
   selector:
     app: node-exporter
+    kind: legacy
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -19,6 +21,7 @@ metadata:
   namespace: kube-system
   labels:
     app: node-exporter
+    kind: legacy
 ---
 apiVersion: extensions/v1beta1
 kind: DaemonSet
@@ -27,12 +30,14 @@ metadata:
   namespace: kube-system
   labels:
     app: node-exporter
+    kind: legacy
 spec:
   template:
     metadata:
       name: node-exporter
       labels:
         app: node-exporter
+        kind: legacy
     spec:
       containers:
       - image: quay.io/giantswarm/node-exporter:v0.15.1
@@ -45,6 +50,7 @@ metadata:
   namespace: kube-system
   labels:
     app: node-exporter
+    kind: legacy
 subjects:
 - kind: ServiceAccount
   name: node-exporter
@@ -61,3 +67,4 @@ metadata:
   namespace: kube-system
   labels:
     app: node-exporter
+    kind: legacy
