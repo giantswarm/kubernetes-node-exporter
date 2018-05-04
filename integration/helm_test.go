@@ -76,6 +76,7 @@ func TestMigration(t *testing.T) {
 	if err != nil {
 		t.Fatalf("could not install kubernetes-node-exporter-chart: %v", err)
 	}
+	defer framework.HelmCmd("delete test-deploy --purge")
 
 	// check that resources are no longer there
 	err = checkResourcesRemoved()
