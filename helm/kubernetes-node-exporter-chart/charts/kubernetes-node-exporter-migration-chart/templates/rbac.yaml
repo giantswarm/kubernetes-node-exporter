@@ -11,14 +11,23 @@ metadata:
     giantswarm.io/service-type: "managed"
 rules:
 - apiGroups:
+  - extensions
+  resources:
+  - daemonsets
+  verbs:
+  - "get"
+  - "delete"
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - rolebindings
+  - roles
+  verbs:
+  - "get"
+  - "delete"
+- apiGroups:
   - ""
   resources:
-  - clusterroles
-  - clusterrolebindings
-  - daemonsets
-  - deployments
-  - roles
-  - rolebindings
   - services
   - serviceaccounts
   verbs:
