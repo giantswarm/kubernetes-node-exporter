@@ -15,7 +15,10 @@ rules:
   resources:
   - clusterroles
   - clusterrolebindings
+  - daemonsets
   - deployments
+  - roles
+  - rolebindings
   - services
   - serviceaccounts
   verbs:
