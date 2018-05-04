@@ -4,6 +4,7 @@ metadata:
   name: {{ .Values.name }}
   annotations:
     "helm.sh/hook": "pre-install"
+    "helm.sh/hook-weight": "-1"
   labels:
     app: {{ .Values.name }}
     giantswarm.io/service-type: "managed"
@@ -26,6 +27,7 @@ metadata:
   name: {{ .Values.name }}
   annotations:
     "helm.sh/hook": "pre-install"
+    "helm.sh/hook-weight": "-1"
   labels:
     app: {{ .Values.name }}
     giantswarm.io/service-type: "managed"
