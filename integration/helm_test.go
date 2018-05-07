@@ -16,7 +16,6 @@ import (
 
 const (
 	resourceNamespace = "kube-system"
-	labelSelector     = "app=node-exporter,kind=legacy"
 )
 
 var (
@@ -65,6 +64,11 @@ func TestHelm(t *testing.T) {
 	}
 }
 
+// TestMigration ensures that previously deployed resources are properly removed.
+// It installs a chart with the same resources as node-exporter and apprpriate
+// labels so that we can query for them. Then installs node-operator chart and
+// checks that the previous resources are removed and the ones from node-exporter
+// are in place.
 func TestMigration(t *testing.T) {
 	// install resources
 	err := framework.HelmCmd("install /e2e/fixtures/resources-chart -n resources")
@@ -72,10 +76,15 @@ func TestMigration(t *testing.T) {
 		t.Fatalf("could not install resources chart: %v", err)
 	}
 
-	// check they are installed
-	err = checkResourcesInstalled()
+	// check legacy resources are present
+	err = checkResourcesPresent("app=node-exporter,kind=legacy")
 	if err != nil {
-		t.Fatalf("could check installed resources: %v", err)
+		t.Fatalf("could check legacy resources present: %v", err)
+	}
+	// check managed resources are not present
+	err = checkResourcesNotPresent("app=node-exporter,giantswarm.io/service-type=managed")
+	if err != nil {
+		t.Fatalf("could check managed resources not present: %v", err)
 	}
 
 	// install kubernetes-node-exporter-chart
@@ -86,14 +95,19 @@ func TestMigration(t *testing.T) {
 	}
 	defer framework.HelmCmd("delete test-deploy --purge")
 
-	// check that resources are no longer there
-	err = checkResourcesRemoved()
+	// check legacy resources are not present
+	err = checkResourcesNotPresent("app=node-exporter,kind=legacy")
 	if err != nil {
-		t.Fatalf("could check removed resources: %v", err)
+		t.Fatalf("could check legacy resources not present: %v", err)
+	}
+	// check managed resources are present
+	err = checkResourcesPresent("app=node-exporter,giantswarm.io/service-type=managed")
+	if err != nil {
+		t.Fatalf("could check managed resources present: %v", err)
 	}
 }
 
-func checkResourcesInstalled() error {
+func checkResourcesPresent(labelSelector string) error {
 	c := f.K8sClient()
 	listOptions := metav1.ListOptions{
 		LabelSelector: labelSelector,
@@ -142,7 +156,7 @@ func checkResourcesInstalled() error {
 	return nil
 }
 
-func checkResourcesRemoved() error {
+func checkResourcesNotPresent(labelSelector string) error {
 	c := f.K8sClient()
 	listOptions := metav1.ListOptions{
 		LabelSelector: labelSelector,
