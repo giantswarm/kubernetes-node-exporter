@@ -70,11 +70,12 @@ func TestHelm(t *testing.T) {
 // checks that the previous resources are removed and the ones from node-exporter
 // are in place.
 func TestMigration(t *testing.T) {
-	// install resources
+	// install legacy resources
 	err := framework.HelmCmd("install /e2e/fixtures/resources-chart -n resources")
 	if err != nil {
 		t.Fatalf("could not install resources chart: %v", err)
 	}
+	defer framework.HelmCmd("delete resources --purge")
 
 	// check legacy resources are present
 	err = checkResourcesPresent("app=node-exporter,kind=legacy")
