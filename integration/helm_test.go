@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"reflect"
 	"testing"
 
 	"github.com/giantswarm/e2e-harness/pkg/framework"
@@ -57,6 +58,11 @@ func TestHelm(t *testing.T) {
 		t.Errorf("unexpected error during installation of the chart: %v", err)
 	}
 	defer framework.HelmCmd("delete test-deploy --purge")
+
+	err = checkDaemonSet()
+	if err != nil {
+		t.Fatalf("daemonset manifest is incorrect: %v", err)
+	}
 
 	err = framework.HelmCmd("test --debug --cleanup test-deploy")
 	if err != nil {
@@ -201,6 +207,44 @@ func checkResourcesNotPresent(labelSelector string) error {
 	}
 	if !apierrors.IsNotFound(err) {
 		return microerror.Mask(err)
+	}
+
+	return nil
+}
+
+// checkDaemonSet ensures that key properties of the node-exporter daemonset are
+// correct.
+func checkDaemonSet() error {
+	name := "node-exporter"
+	expectedLabels := map[string]string{
+		"app": "node-exporter",
+		"giantswarm.io/service-type": "managed",
+	}
+	expectedMatchLabels := map[string]string{
+		"app": "node-exporter",
+	}
+
+	c := f.K8sClient()
+	ds, err := c.Apps().DaemonSets(resourceNamespace).Get(name, metav1.GetOptions{})
+	if apierrors.IsNotFound(err) {
+		return microerror.Newf("could not find daemonset: '%s' %v", name, err)
+	} else if err != nil {
+		return microerror.Newf("unexpected error getting daemonset: %v", err)
+	}
+
+	// Check daemonset labels.
+	if !reflect.DeepEqual(expectedLabels, ds.ObjectMeta.Labels) {
+		return microerror.Newf("expected labels: %v got: %v", expectedLabels, ds.ObjectMeta.Labels)
+	}
+
+	// Check selector match labels.
+	if !reflect.DeepEqual(expectedMatchLabels, ds.Spec.Selector.MatchLabels) {
+		return microerror.Newf("expected match labels: %v got: %v", expectedMatchLabels, ds.Spec.Selector.MatchLabels)
+	}
+
+	// Check pod labels.
+	if !reflect.DeepEqual(expectedLabels, ds.Spec.Template.ObjectMeta.Labels) {
+		return microerror.Newf("expected pod labels: %v got: %v", expectedLabels, ds.Spec.Template.ObjectMeta.Labels)
 	}
 
 	return nil
