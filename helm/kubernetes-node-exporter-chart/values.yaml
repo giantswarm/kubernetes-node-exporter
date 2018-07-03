@@ -7,7 +7,8 @@ namespace: kube-system
 port: 10300
 
 image:
-  repository: quay.io/giantswarm/node-exporter
+  registry: quay.io
+  repository: giantswarm/node-exporter
   tag: v0.15.1
 
 resources:
@@ -20,5 +21,6 @@ resources:
 
 test:
   image:
-    repository: quay.io/giantswarm/alpine-testing
+    registry: quay.io
+    repository: giantswarm/alpine-testing
     tag: 0.1.0
