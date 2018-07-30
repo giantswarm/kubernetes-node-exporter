@@ -15,4 +15,10 @@ $ cd kubernetes-node-exporter
 $ helm install helm/kubernetes-node-exporter-chart
 ```
 
-Deployment to Guest Clusters will be handled by [chart-operator](https://github.com/giantswarm/chart-operator).
+Provide a custom `values.yaml`:
+
+```bash
+$ helm install kubernetes-node-exporter-chart -f values.yaml
+```
+
+Deployment to Guest Clusters is handled by [chart-operator](https://github.com/giantswarm/chart-operator).
