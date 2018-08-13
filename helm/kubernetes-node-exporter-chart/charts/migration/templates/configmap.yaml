@@ -48,17 +48,6 @@ data:
             }
         },
         {
-            "kind": "ServiceAccount",
-            "name": "node-exporter",
-            "namespace": "kube-system",
-            "matchLabels": {
-                "app": "node-exporter"
-            },
-            "excludeLabels": {
-                "giantswarm.io/service-type": "managed"
-            }
-        },
-        {
             "kind": "RoleBinding",
             "name": "node-exporter",
             "namespace": "kube-system",
@@ -71,6 +60,17 @@ data:
         },
         {
             "kind": "Role",
+            "name": "node-exporter",
+            "namespace": "kube-system",
+            "matchLabels": {
+                "app": "node-exporter"
+            },
+            "excludeLabels": {
+                "giantswarm.io/service-type": "managed"
+            }
+        },
+        {
+            "kind": "ServiceAccount",
             "name": "node-exporter",
             "namespace": "kube-system",
             "matchLabels": {
