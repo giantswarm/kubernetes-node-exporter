@@ -22,7 +22,7 @@ const (
 
 var (
 	h *framework.Host
-	l *micrologger.Logger
+	l micrologger.Logger
 )
 
 // TestMain allows us to have common setup and teardown steps that are run
