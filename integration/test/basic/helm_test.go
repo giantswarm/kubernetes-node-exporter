@@ -11,6 +11,7 @@ import (
 
 	"github.com/giantswarm/e2e-harness/pkg/framework"
 	"github.com/giantswarm/microerror"
+	"github.com/giantswarm/micrologger"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -21,6 +22,7 @@ const (
 
 var (
 	h *framework.Host
+	l *micrologger.Logger
 )
 
 // TestMain allows us to have common setup and teardown steps that are run
@@ -28,6 +30,14 @@ var (
 func TestMain(m *testing.M) {
 	var v int
 	var err error
+
+	{
+		c := micrologger.Config{}
+		l, err = micrologger.New(c)
+		if err != nil {
+			panic(err.Error())
+		}
+	}
 
 	{
 		c := framework.HostConfig{
@@ -41,7 +51,7 @@ func TestMain(m *testing.M) {
 		}
 	}
 
-	if err := f.CreateNamespace("giantswarm"); err != nil {
+	if err := h.CreateNamespace("giantswarm"); err != nil {
 		log.Printf("unexpected error: %v\n", err)
 		v = 1
 	}
