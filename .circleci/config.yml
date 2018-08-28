@@ -25,7 +25,9 @@ e2eTest: &e2eTest
         name: Publish chart to CNR using a temporary channel for testing
         command: ./architect publish --pipeline=false --channels=${CIRCLE_SHA1}-${TEST_NAME}
 
-    - run: ./e2e-harness test --test-dir=${TEST_DIR}
+    - run:
+        name: Run e2e test
+        command:  ./e2e-harness test --test-dir=${TEST_DIR}
 
     - run:
         name: Finish with cleanup, no matter if the test succeeded or not
