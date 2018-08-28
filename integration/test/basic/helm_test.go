@@ -20,7 +20,7 @@ const (
 )
 
 var (
-	f *framework.Host
+	h *framework.Host
 )
 
 // TestMain allows us to have common setup and teardown steps that are run
@@ -29,9 +29,16 @@ func TestMain(m *testing.M) {
 	var v int
 	var err error
 
-	f, err = framework.NewHost(framework.HostConfig{})
-	if err != nil {
-		panic(err.Error())
+	{
+		c := framework.HostConfig{
+			Logger:     l,
+			ClusterID:  "na",
+			VaultToken: "na",
+		}
+		h, err = framework.NewHost(c)
+		if err != nil {
+			panic(err.Error())
+		}
 	}
 
 	if err := f.CreateNamespace("giantswarm"); err != nil {
@@ -44,7 +51,7 @@ func TestMain(m *testing.M) {
 	}
 
 	if os.Getenv("KEEP_RESOURCES") != "true" {
-		f.Teardown()
+		h.Teardown()
 	}
 
 	os.Exit(v)
@@ -115,7 +122,7 @@ func TestMigration(t *testing.T) {
 }
 
 func checkResourcesPresent(labelSelector string) error {
-	c := f.K8sClient()
+	c := h.K8sClient()
 	listOptions := metav1.ListOptions{
 		LabelSelector: labelSelector,
 	}
@@ -164,7 +171,7 @@ func checkResourcesPresent(labelSelector string) error {
 }
 
 func checkResourcesNotPresent(labelSelector string) error {
-	c := f.K8sClient()
+	c := h.K8sClient()
 	listOptions := metav1.ListOptions{
 		LabelSelector: labelSelector,
 	}
@@ -224,7 +231,7 @@ func checkDaemonSet() error {
 		"app": "node-exporter",
 	}
 
-	c := f.K8sClient()
+	c := h.K8sClient()
 	ds, err := c.Apps().DaemonSets(resourceNamespace).Get(name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
 		return microerror.Newf("could not find daemonset: '%s' %v", name, err)
