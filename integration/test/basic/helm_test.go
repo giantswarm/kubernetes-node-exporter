@@ -68,7 +68,7 @@ func TestMain(m *testing.M) {
 }
 
 func TestHelm(t *testing.T) {
-	channel := os.Getenv("CIRCLE_SHA1")
+	channel := fmt.Sprintg("%s-%s", os.Getenv("CIRCLE_SHA1"), os.Getenv("TEST_NAME"))
 
 	err := framework.HelmCmd(fmt.Sprintf("registry install --wait quay.io/giantswarm/kubernetes-node-exporter-chart:%s -n test-deploy", channel))
 	if err != nil {
