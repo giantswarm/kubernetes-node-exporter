@@ -196,7 +196,7 @@ func checkDaemonSet() error {
 		"app": "node-exporter",
 	}
 
-	c := f.K8sClient()
+	c := h.K8sClient()
 	ds, err := c.Apps().DaemonSets(resourceNamespace).Get(name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
 		return microerror.Newf("could not find daemonset: '%s' %v", name, err)
