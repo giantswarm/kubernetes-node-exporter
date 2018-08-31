@@ -4,12 +4,11 @@ package integration
 
 import (
 	"fmt"
-	"log"
-	"os"
 	"reflect"
 	"testing"
 
 	"github.com/giantswarm/e2e-harness/pkg/framework"
+	"github.com/giantswarm/e2esetup/chart/env"
 	"github.com/giantswarm/microerror"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -23,35 +22,8 @@ var (
 	f *framework.Host
 )
 
-// TestMain allows us to have common setup and teardown steps that are run
-// once for all the tests https://golang.org/pkg/testing/#hdr-Main.
-func TestMain(m *testing.M) {
-	var v int
-	var err error
-
-	f, err = framework.NewHost(framework.HostConfig{})
-	if err != nil {
-		panic(err.Error())
-	}
-
-	if err := f.CreateNamespace("giantswarm"); err != nil {
-		log.Printf("unexpected error: %v\n", err)
-		v = 1
-	}
-
-	if v == 0 {
-		v = m.Run()
-	}
-
-	if os.Getenv("KEEP_RESOURCES") != "true" {
-		f.Teardown()
-	}
-
-	os.Exit(v)
-}
-
 func TestHelm(t *testing.T) {
-	channel := os.Getenv("CIRCLE_SHA1")
+	channel := env.CircleSHA()
 
 	err := framework.HelmCmd(fmt.Sprintf("registry install --wait quay.io/giantswarm/kubernetes-node-exporter-chart:%s -n test-deploy", channel))
 	if err != nil {
@@ -95,7 +67,7 @@ func TestMigration(t *testing.T) {
 	}
 
 	// install kubernetes-node-exporter-chart
-	channel := os.Getenv("CIRCLE_SHA1")
+	channel := env.CircleSHA()
 	err = framework.HelmCmd(fmt.Sprintf("registry install --wait quay.io/giantswarm/kubernetes-node-exporter-chart:%s -n test-deploy", channel))
 	if err != nil {
 		t.Fatalf("could not install kubernetes-node-exporter-chart: %v", err)
@@ -115,7 +87,7 @@ func TestMigration(t *testing.T) {
 }
 
 func checkResourcesPresent(labelSelector string) error {
-	c := f.K8sClient()
+	c := h.K8sClient()
 	listOptions := metav1.ListOptions{
 		LabelSelector: labelSelector,
 	}
@@ -164,7 +136,7 @@ func checkResourcesPresent(labelSelector string) error {
 }
 
 func checkResourcesNotPresent(labelSelector string) error {
-	c := f.K8sClient()
+	c := h.K8sClient()
 	listOptions := metav1.ListOptions{
 		LabelSelector: labelSelector,
 	}
@@ -224,7 +196,7 @@ func checkDaemonSet() error {
 		"app": "node-exporter",
 	}
 
-	c := f.K8sClient()
+	c := h.K8sClient()
 	ds, err := c.Apps().DaemonSets(resourceNamespace).Get(name, metav1.GetOptions{})
 	if apierrors.IsNotFound(err) {
 		return microerror.Newf("could not find daemonset: '%s' %v", name, err)
