@@ -4,11 +4,11 @@ package integration
 
 import (
 	"fmt"
-	"os"
 	"reflect"
 	"testing"
 
 	"github.com/giantswarm/e2e-harness/pkg/framework"
+	"github.com/giantswarm/e2esetup/chart/env"
 	"github.com/giantswarm/microerror"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -23,7 +23,7 @@ var (
 )
 
 func TestHelm(t *testing.T) {
-	channel := os.Getenv("CIRCLE_SHA1")
+	channel := env.CircleSHA()
 
 	err := framework.HelmCmd(fmt.Sprintf("registry install --wait quay.io/giantswarm/kubernetes-node-exporter-chart:%s -n test-deploy", channel))
 	if err != nil {
@@ -67,7 +67,7 @@ func TestMigration(t *testing.T) {
 	}
 
 	// install kubernetes-node-exporter-chart
-	channel := os.Getenv("CIRCLE_SHA1")
+	channel := env.CircleSHA()
 	err = framework.HelmCmd(fmt.Sprintf("registry install --wait quay.io/giantswarm/kubernetes-node-exporter-chart:%s -n test-deploy", channel))
 	if err != nil {
 		t.Fatalf("could not install kubernetes-node-exporter-chart: %v", err)
