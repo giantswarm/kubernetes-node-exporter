@@ -87,7 +87,7 @@ func TestMigration(t *testing.T) {
 }
 
 func checkResourcesPresent(labelSelector string) error {
-	c := f.K8sClient()
+	c := h.K8sClient()
 	listOptions := metav1.ListOptions{
 		LabelSelector: labelSelector,
 	}
@@ -136,7 +136,7 @@ func checkResourcesPresent(labelSelector string) error {
 }
 
 func checkResourcesNotPresent(labelSelector string) error {
-	c := f.K8sClient()
+	c := h.K8sClient()
 	listOptions := metav1.ListOptions{
 		LabelSelector: labelSelector,
 	}
