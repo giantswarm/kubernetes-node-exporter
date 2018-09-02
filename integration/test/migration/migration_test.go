@@ -1,6 +1,6 @@
 // +build k8srequired
 
-package basic
+package migration
 
 import (
 	"context"
