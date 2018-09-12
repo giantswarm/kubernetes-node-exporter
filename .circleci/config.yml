@@ -65,7 +65,6 @@ jobs:
       TEST_NAME: "migration"
     <<: *e2eTest
 
-
   deploy:
     machine: true
     steps:
@@ -96,7 +95,11 @@ workflows:
     jobs:
       - build
 
-      - e2eTest:
+      - e2eTestBasic:
+          requires:
+          - build
+      
+      - e2eTestMigration:
           requires:
           - build
 
