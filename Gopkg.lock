@@ -131,7 +131,7 @@
     "pkg/clientset/versioned/typed/example/v1alpha1",
     "pkg/clientset/versioned/typed/provider/v1alpha1"
   ]
-  revision = "4c9945ca5b9cb966b22566c8e3fd789fefd5db98"
+  revision = "4d9ca2bad28ae15e6f5ea59de6b50224cb19beeb"
 
 [[projects]]
   branch = "master"
@@ -154,7 +154,7 @@
     "pkg/framework/resource",
     "pkg/harness"
   ]
-  revision = "7e1c962c0edc1dfb2321ae32b10aa66415d98965"
+  revision = "b8f538cd46acde7bd3570348948080de2b07b8ae"
 
 [[projects]]
   branch = "master"
@@ -167,6 +167,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/giantswarm/e2etests"
+  packages = ["managedservices"]
+  revision = "bc2f34dab1e20f4be9cfdf04bb1881d47f0daffe"
+
+[[projects]]
+  branch = "master"
   name = "github.com/giantswarm/errors"
   packages = ["guest"]
   revision = "51a7ca6b403dc133497da26a0a30684a5df56752"
@@ -175,13 +181,13 @@
   branch = "master"
   name = "github.com/giantswarm/helmclient"
   packages = ["."]
-  revision = "ec20d46eb68e6fd0cda0a6c0132df4a3fc1a8318"
+  revision = "e34390752975ad2db4b52bad7487440223184073"
 
 [[projects]]
   branch = "master"
   name = "github.com/giantswarm/k8sportforward"
   packages = ["."]
-  revision = "cee042b3bd70531ea52f41df02c04430879806e2"
+  revision = "3608d312c501d5f4e4390399c5e8a97866205e36"
 
 [[projects]]
   branch = "master"
@@ -280,7 +286,7 @@
   branch = "master"
   name = "github.com/google/go-github"
   packages = ["github"]
-  revision = "c722fc7cbdbd07946fb97667dfe3c931a30cb9af"
+  revision = "7a180b5eed10c86fc54bcc274753eb35717931db"
 
 [[projects]]
   branch = "master"
@@ -535,7 +541,7 @@
   branch = "master"
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
-  revision = "c66870c02cf823ceb633bcd05be3c7cda29976f4"
+  revision = "11092d34479b07829b72e10713b159248caf5dad"
 
 [[projects]]
   name = "google.golang.org/grpc"
@@ -1051,6 +1057,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "643d485f9a9f52371f2c043a36669ae0c39fae76829175fb3bc1837f65aa626e"
+  inputs-digest = "e37c6ed46531f1e4f48d4974cd4ae11e8d41e9e0517d799ef5fdad0f6e3e5e2a"
   solver-name = "gps-cdcl"
   solver-version = 1

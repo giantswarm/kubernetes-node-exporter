@@ -1,6 +1,6 @@
 // +build k8srequired
 
-package integration
+package migration
 
 import (
 	"context"
@@ -36,9 +36,10 @@ func init() {
 
 	{
 		c := framework.HostConfig{
-			Logger:     l,
-			ClusterID:  "na",
-			VaultToken: "na",
+			Logger: l,
+
+			ClusterID:  "n/a",
+			VaultToken: "n/a",
 		}
 		h, err = framework.NewHost(c)
 		if err != nil {
@@ -48,9 +49,10 @@ func init() {
 
 	{
 		c := helmclient.Config{
-			Logger:          l,
-			K8sClient:       h.K8sClient(),
-			RestConfig:      h.RestConfig(),
+			Logger:     l,
+			K8sClient:  h.K8sClient(),
+			RestConfig: h.RestConfig(),
+
 			TillerNamespace: "giantswarm",
 		}
 		helmClient, err = helmclient.New(c)
@@ -62,7 +64,8 @@ func init() {
 	resourceConfig := resource.ResourceConfig{
 		Logger:     l,
 		HelmClient: helmClient,
-		Namespace:  metav1.NamespaceSystem,
+
+		Namespace: metav1.NamespaceSystem,
 	}
 	r, err = resource.New(resourceConfig)
 	if err != nil {
