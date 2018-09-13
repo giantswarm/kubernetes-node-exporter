@@ -42,7 +42,7 @@ func TestMigration(t *testing.T) {
 	}
 
 	// install kubernetes-node-exporter-chart
-	channel := env.CircleSHA()
+	channel := fmt.Sprintf("%s-%s", env.CircleSHA(), "migration")
 	err = framework.HelmCmd(fmt.Sprintf("registry install --wait quay.io/giantswarm/kubernetes-node-exporter-chart:%s -n test-deploy", channel))
 	if err != nil {
 		t.Fatalf("could not install kubernetes-node-exporter-chart: %v", err)
