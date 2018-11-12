@@ -76,15 +76,9 @@ spec:
         resources:
 {{ toYaml .Values.resources | indent 10 }}
         volumeMounts:
-        - name: root
-          mountPath: /rootfs
-          readOnly: true
         - mountPath: /var/run/dbus/
           name: systemd-volume
       volumes:
-      - name: root
-        hostPath:
-          path: /
       - name: systemd-volume
         hostPath:
           path: /var/run/dbus/
