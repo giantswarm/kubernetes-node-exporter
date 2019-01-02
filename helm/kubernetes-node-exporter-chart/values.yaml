@@ -9,7 +9,7 @@ port: 10300
 image:
   registry: quay.io
   repository: giantswarm/node-exporter
-  tag: v0.17.0
+  tag: v0.15.1
 
 resources:
   limits:
