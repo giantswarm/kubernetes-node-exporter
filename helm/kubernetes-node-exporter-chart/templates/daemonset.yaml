@@ -31,7 +31,7 @@ spec:
         - name: metrics
           containerPort: {{ .Values.port }}
         args:
-        - '--log.level=debug'
+        - '--log.level=info'
         - '--web.listen-address=:{{ .Values.port }}'
         - '--collector.arp'
         - '--collector.bcache'
