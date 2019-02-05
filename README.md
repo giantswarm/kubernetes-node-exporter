@@ -21,4 +21,4 @@ Provide a custom `values.yaml`:
 $ helm install kubernetes-node-exporter-chart -f values.yaml
 ```
 
-Deployment to Guest Clusters is handled by [chart-operator](https://github.com/giantswarm/chart-operator).
+Deployment to tenant clusters is handled by [chart-operator](https://github.com/giantswarm/chart-operator).
