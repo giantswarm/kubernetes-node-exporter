@@ -24,6 +24,8 @@ spec:
       - key: node-role.kubernetes.io/master
         operator: Exists
         effect: NoSchedule
+      securityContext:
+        runAsUser: 0
       containers:
       - image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         name: {{ .Values.name }}
@@ -98,6 +100,8 @@ spec:
         - mountPath: /var/run/dbus/
           name: var-run-dbus
           readOnly: true
+        securityContext:
+          privileged: true
       volumes:
       - name: root
         hostPath:
