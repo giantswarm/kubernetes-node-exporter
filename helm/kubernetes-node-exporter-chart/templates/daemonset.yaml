@@ -42,7 +42,6 @@ spec:
         - '--collector.bcache'
         - '--collector.conntrack'
         - '--collector.cpu'
-        - '--collector.diskstats'
         - '--collector.edac'
         - '--collector.entropy'
         - '--collector.filefd'
@@ -63,6 +62,7 @@ spec:
         - '--collector.vmstat'
         - '--collector.xfs'
 
+        - '--no-collector.diskstats'
         - '--no-collector.infiniband'
         - '--no-collector.textfile'
         - '--no-collector.wifi'

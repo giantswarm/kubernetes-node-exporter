@@ -2,4 +2,4 @@ apiVersion: v1
 appVersion: "v0.15.1"
 description: A Helm chart for Kubernetes Node-Exporter Service
 name: kubernetes-node-exporter-chart
-version: 0.1.11-[[ .SHA ]]
+version: 0.1.12-[[ .SHA ]]
