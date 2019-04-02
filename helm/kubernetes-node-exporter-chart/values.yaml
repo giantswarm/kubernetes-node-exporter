@@ -13,10 +13,10 @@ image:
 
 resources:
   limits:
-    cpu: 55m
+    cpu: 200m
     memory: 75Mi
   requests:
-    cpu: 55m
+    cpu: 200m
     memory: 75Mi
 
 test:
