@@ -25,7 +25,8 @@ spec:
         operator: Exists
         effect: NoSchedule
       securityContext:
-        runAsUser: 0
+        runAsUser: {{ .userID }}
+        runAsGroup: {{ .userGroup }}
       containers:
       - image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         name: {{ .Values.name }}
