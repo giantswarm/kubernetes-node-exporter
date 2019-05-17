@@ -24,7 +24,11 @@ metadata:
     app: {{ .Values.name }}
     giantswarm.io/service-type: "managed"
 rules:
-- apiGroups:     ['extensions']
-  resources:     ['podsecuritypolicies']
-  resourceNames: ['{{ .Values.name }}']
-  verbs:         ['use']
+- apiGroups:
+  - extensions
+  resources:
+  - podsecuritypolicies
+  resourceNames:
+  - {{ .Values.name }}
+  verbs:
+  - "use"
