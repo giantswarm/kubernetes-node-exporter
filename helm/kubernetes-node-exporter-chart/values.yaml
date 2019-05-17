@@ -6,6 +6,9 @@ name: node-exporter
 namespace: kube-system
 port: 10300
 
+userID: 65535
+groupID: 65535
+
 image:
   registry: quay.io
   repository: giantswarm/node-exporter
