@@ -6,7 +6,7 @@ metadata:
     app: {{ .Values.name }}
     giantswarm.io/service-type: "managed"
 spec:
-  privileged: true
+  privileged: false
   allowPrivilegeEscalation: true
   runAsUser:
     rule: MustRunAsNonRoot
