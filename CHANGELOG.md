@@ -11,5 +11,3 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 - Separate pod security policy for node-exporter and node-exporter-migration workloads.
 - Security context with non-root user (`nobody`) for running node-exporter inside container.
-
-
