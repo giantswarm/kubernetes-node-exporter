@@ -101,8 +101,6 @@ spec:
         - mountPath: /var/run/dbus/
           name: var-run-dbus
           readOnly: true
-        securityContext:
-          privileged: true
       volumes:
       - name: root
         hostPath:

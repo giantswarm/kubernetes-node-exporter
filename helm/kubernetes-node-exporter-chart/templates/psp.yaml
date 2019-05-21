@@ -6,18 +6,26 @@ metadata:
     app: {{ .Values.name }}
     giantswarm.io/service-type: "managed"
 spec:
+  privileged: false
   allowPrivilegeEscalation: true
-  fsGroup:
-    rule: RunAsAny
-  privileged: true
   runAsUser:
     rule: MustRunAsNonRoot
   seLinux:
     rule: RunAsAny
   supplementalGroups:
-    rule: RunAsAny
+    rule: 'MustRunAs'
+    ranges:
+      - min: 1
+        max: 65535
+  fsGroup:
+    rule: 'MustRunAs'
+    ranges:
+      - min: 1
+        max: 65535
   volumes:
-  - '*'
+  - 'secret'
+  - 'configMap'
+  - 'hostPath'
   hostPID: true
   hostIPC: true
   hostNetwork: true
