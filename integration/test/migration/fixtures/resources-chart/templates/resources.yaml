@@ -40,7 +40,7 @@ spec:
         kind: legacy
     spec:
       containers:
-      - image: quay.io/giantswarm/node-exporter:v0.15.1
+      - image: quay.io/giantswarm/node-exporter:v0.18.0
         name: node-exporter
 ---
 kind: RoleBinding

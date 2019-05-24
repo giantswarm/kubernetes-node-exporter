@@ -12,15 +12,15 @@ groupID: 65535
 image:
   registry: quay.io
   repository: giantswarm/node-exporter
-  tag: v0.15.1
+  tag: v0.18.0
 
 resources:
   limits:
     cpu: 200m
-    memory: 75Mi
+    memory: 50Mi
   requests:
     cpu: 200m
-    memory: 75Mi
+    memory: 50Mi
 
 test:
   image:
