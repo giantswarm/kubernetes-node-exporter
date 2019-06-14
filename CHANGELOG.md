@@ -29,5 +29,6 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Security context with non-root user (`nobody`) for running node-exporter inside container.
 
 [Unreleased]: https://github.com/giantswarm/kubernetes-node-exporter/compare/v0.3.1...HEAD
-[0.1.1]: https://github.com/giantswarm/kubernetes-node-exporter/releases/tag/v0.3.0
-[0.1.0]: https://github.com/giantswarm/kubernetes-node-exporter/releases/tag/v0.2.0
+[0.3.1]: https://github.com/giantswarm/kubernetes-node-exporter/releases/tag/v0.3.1
+[0.3.0]: https://github.com/giantswarm/kubernetes-node-exporter/releases/tag/v0.3.0
+[0.2.0]: https://github.com/giantswarm/kubernetes-node-exporter/releases/tag/v0.2.0
