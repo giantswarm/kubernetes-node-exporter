@@ -35,8 +35,7 @@ spec:
           containerPort: {{ .Values.port }}
         args:
         - '--log.level=info'
-        - '--path.procfs=/host/proc'
-        - '--path.sysfs=/host/sys'
+        - '--path.rootfs=/rootfs'
         - '--web.listen-address=:{{ .Values.port }}'
 
         - '--collector.arp'
@@ -48,7 +47,6 @@ spec:
         - '--collector.filefd'
         - '--collector.filesystem'
         - '--collector.hwmon'
-        - '--collector.ipvs'
         - '--collector.loadavg'
         - '--collector.mdadm'
         - '--collector.meminfo'
@@ -65,6 +63,7 @@ spec:
 
         - '--no-collector.diskstats'
         - '--no-collector.infiniband'
+        - '--no-collector.ipvs'
         - '--no-collector.textfile'
         - '--no-collector.wifi'
         - '--no-collector.zfs'
@@ -86,40 +85,10 @@ spec:
         - name: root
           mountPath: /rootfs
           readOnly: true
-        - name: proc
-          mountPath: /host/proc
-          readOnly: true
-        - name: sys
-          mountPath: /host/sys
-          readOnly: true
-        - name: var-lib-docker
-          mountPath: /var/lib/docker
-          readOnly: true
-        - name: var-lib-kubelet
-          mountPath: /var/lib/kubelet
-          readOnly: true
-        - mountPath: /var/run/dbus/
-          name: var-run-dbus
-          readOnly: true
       volumes:
       - name: root
         hostPath:
           path: /
-      - name: proc
-        hostPath:
-          path: /proc
-      - name: sys
-        hostPath:
-          path: /sys
-      - name: var-lib-docker
-        hostPath:
-          path: /var/lib/docker
-      - name: var-lib-kubelet
-        hostPath:
-          path: /var/lib/kubelet
-      - name: var-run-dbus
-        hostPath:
-          path: /var/run/dbus/
       serviceAccountName: {{ .Values.name }}
       hostNetwork: true
       hostPID: true
