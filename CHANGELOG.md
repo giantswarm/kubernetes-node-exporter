@@ -7,6 +7,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [v0.3.1] 2019-06-14
 
+### Changed
+
+- Disabled ipvs collector.
+
 ### Fixed
 
 - Fix monitored file system mount points.
