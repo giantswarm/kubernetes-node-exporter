@@ -85,7 +85,7 @@ spec:
         - name: root
           mountPath: /rootfs
           readOnly: true
-	# go-systemd hardcores the systemd socket path,
+	# go-systemd hardcodes the systemd socket path,
 	# so --path.rootfs is not respected.
 	# We mount the socket in to the correct path to get around this.
         - name: systemd
