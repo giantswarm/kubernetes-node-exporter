@@ -14,6 +14,7 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 ### Fixed
 
 - Fix monitored file system mount points.
+- Fix path mount for systemd collector.
 
 ## [v0.3.0]
 
