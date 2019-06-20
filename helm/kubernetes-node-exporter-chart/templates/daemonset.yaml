@@ -25,8 +25,7 @@ spec:
         operator: Exists
         effect: NoSchedule
       securityContext:
-        runAsUser: {{ .Values.userID }}
-        runAsGroup: {{ .Values.userGroup }}
+        runAsUser: 0
       containers:
       - image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         name: {{ .Values.name }}
@@ -81,14 +80,25 @@ spec:
           timeoutSeconds: 5
         resources:
 {{ toYaml .Values.resources | indent 10 }}
+        securityContext:
+          privileged: true
         volumeMounts:
         - name: root
           mountPath: /rootfs
+          readOnly: true
+        # go-systemd hardcodes the systemd socket path,
+        # so --path.rootfs is not respected.
+        # We mount the socket in to the correct path to get around this.
+        - name: systemd
+          mountPath: /run/systemd
           readOnly: true
       volumes:
       - name: root
         hostPath:
           path: /
+      - name: systemd
+        hostPath:
+          path: /run/systemd
       serviceAccountName: {{ .Values.name }}
       hostNetwork: true
       hostPID: true

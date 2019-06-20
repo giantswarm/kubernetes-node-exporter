@@ -5,11 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project's packages adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [v0.4.1] 2019-06-20
+
+### Fixed
+
+- Fix path mount for systemd collector
+- Fix systemd collector dbus connection - run as root.
+
 ## [v0.4.0] 2019-06-14
 
 ### Changed
 
-- Disabled ipvs collector.
+- Disable ipvs collector.
 
 ### Fixed
 
@@ -28,7 +35,8 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Separate pod security policy for node-exporter and node-exporter-migration workloads.
 - Security context with non-root user (`nobody`) for running node-exporter inside container.
 
-[Unreleased]: https://github.com/giantswarm/kubernetes-node-exporter/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/giantswarm/kubernetes-node-exporter/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/giantswarm/kubernetes-node-exporter/releases/tag/v0.4.1
 [0.4.0]: https://github.com/giantswarm/kubernetes-node-exporter/releases/tag/v0.4.0
 [0.3.0]: https://github.com/giantswarm/kubernetes-node-exporter/releases/tag/v0.3.0
 [0.2.0]: https://github.com/giantswarm/kubernetes-node-exporter/releases/tag/v0.2.0
