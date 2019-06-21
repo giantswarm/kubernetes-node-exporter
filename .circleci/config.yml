@@ -97,10 +97,6 @@ workflows:
           requires:
           - build
 
-      - e2eTestMigration:
-          requires:
-          - build
-
       - deploy:
           filters:
             branches:
