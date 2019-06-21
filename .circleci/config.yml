@@ -63,12 +63,6 @@ jobs:
       TEST_NAME: "basic"
     <<: *e2eTest
 
-  e2eTestMigration:
-    environment:
-      TEST_DIR: "integration/test/migration"
-      TEST_NAME: "migration"
-    <<: *e2eTest
-
   deploy:
     machine: true
     steps:
@@ -113,7 +107,6 @@ workflows:
               only: master
           requires:
           - e2eTestBasic
-          - e2eTestMigration
 
       - publish_to_stable:
           filters:
