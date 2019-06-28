@@ -86,7 +86,7 @@ spec:
           mountPath: /rootfs
           readOnly: true
         - name: dbus
-          mountPath: /var/run/dbus/
+          mountPath: /var/run/dbus
           readOnly: true
         # go-systemd hardcodes the systemd socket path,
         # so --path.rootfs is not respected.
@@ -100,7 +100,7 @@ spec:
           path: /
       - name: dbus
         hostPath:
-          path: /var/run/dbus/
+          path: /var/run/dbus
       - name: systemd
         hostPath:
           path: /run/systemd
