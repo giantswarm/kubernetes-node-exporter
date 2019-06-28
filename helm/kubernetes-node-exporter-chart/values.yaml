@@ -6,13 +6,14 @@ name: node-exporter
 namespace: kube-system
 port: 10300
 
-userID: 65535
-groupID: 65535
+# Run as giantswarm user.
+userID: 1000
+groupID: 1000
 
 image:
   registry: quay.io
   repository: giantswarm/node-exporter
-  tag: v0.18.0
+  tag: v0.18.0-giantswarm
 
 resources:
   limits:
