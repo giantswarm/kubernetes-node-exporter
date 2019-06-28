@@ -9,7 +9,7 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ### Fixed
 
-- Fix systemd collector dbus connection. https://github.com/giantswarm/kubernetes-node-exporter/pull/44
+- Fix systemd collector D-Bus connection. https://github.com/giantswarm/kubernetes-node-exporter/pull/44
 
 ## [v0.4.0] 2019-06-14
 
