@@ -89,7 +89,7 @@ spec:
         # so --path.rootfs is not respected.
         # We mount the socket in to the correct path to get around this.
         - name: systemd
-          mountPath: /var/run/systemd
+          mountPath: /run/systemd
           readOnly: true
       volumes:
       - name: root
@@ -97,7 +97,7 @@ spec:
           path: /
       - name: systemd
         hostPath:
-          path: /var/run/systemd
+          path: /run/systemd
       serviceAccountName: {{ .Values.name }}
       hostNetwork: true
       hostPID: true
