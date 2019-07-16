@@ -13,6 +13,10 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 - Fix systemd collector D-Bus connection. https://github.com/giantswarm/kubernetes-node-exporter/pull/44
 
+### Changed
+
+- Tolerations changed to tolerate all taints.
+
 ## [0.4.0] 2019-06-14
 
 ### Changed
