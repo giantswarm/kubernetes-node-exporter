@@ -7,11 +7,12 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [Unreleased]
 
-## [0.5.0] 2019-07-17
+## [0.5.1] 2019-07-17
 
 ### Changed
 
 - Tolerations changed to tolerate all taints.
+- Change prioty class from to `giantswarm-critical`.
 
 ## [0.4.1] 2019-06-28
 
