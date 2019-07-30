@@ -6,9 +6,9 @@ name: node-exporter
 namespace: kube-system
 port: 10300
 
-# Run as giantswarm user.
-userID: 1000
-groupID: 1000
+# Run as root user to get proper permissions
+userID: 0
+groupID: 0
 
 image:
   registry: quay.io
