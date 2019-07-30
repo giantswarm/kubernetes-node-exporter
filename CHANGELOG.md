@@ -9,10 +9,15 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 
 ## [0.5.1] 2019-07-17
 
+### Added
+
+- Add initContainer, which sets ownership of the `/var/lib/kubelet` directory to `giantswarm` group.
+
 ### Changed
 
 - Tolerations changed to tolerate all taints.
 - Change prioty class from to `giantswarm-critical`.
+- `PodSecurityPolicy` allows running containers with root user. That is used for initContainer, which sets ownership. 
 
 ## [0.4.1] 2019-06-28
 

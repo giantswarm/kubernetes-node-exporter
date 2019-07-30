@@ -22,10 +22,20 @@ spec:
       tolerations:
       # Tolerate all taints for observability
       - operator: "Exists"
-      securityContext:
-        runAsUser: {{ .Values.userID }}
-        runAsGroup: {{ .Values.userGroup }}
       priorityClassName: giantswarm-critical
+      initContainers:
+      - name: {{ .Values.initContainer.name }}
+        image: {{ .Values.initContainer.image }}
+        command:
+        - /bin/sh
+        - -c
+        - "chown root:giantswarm /rootfs/var/lib/kubelet -R"
+        securityContext:
+          runAsUser: 0
+        volumeMounts:
+        - name: root
+          mountPath: /rootfs
+          readOnly: true
       containers:
       - image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         name: {{ .Values.name }}
@@ -80,6 +90,9 @@ spec:
           timeoutSeconds: 5
         resources:
 {{ toYaml .Values.resources | indent 10 }}
+        securityContext:
+          runAsUser: {{ .Values.userID }}
+          runAsGroup: {{ .Values.userGroup }}
         volumeMounts:
         - name: root
           mountPath: /rootfs

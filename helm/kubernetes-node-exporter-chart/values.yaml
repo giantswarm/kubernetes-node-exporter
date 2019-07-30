@@ -23,6 +23,10 @@ resources:
     cpu: 200m
     memory: 50Mi
 
+initContainer:
+  name: set-giantswarm-user-ownership
+  image: quay.io/giantswarm/alpine:3.9-giantswarm
+
 test:
   image:
     registry: quay.io
