@@ -14,6 +14,7 @@ and this project's packages adheres to [Semantic Versioning](http://semver.org/s
 - Tolerations changed to tolerate all taints.
 - Change prioty class from to `giantswarm-critical`.
 - Run node-exporter as root user to get proper permissions.
+- Remove CPU limits, decrease CPU requests.
 
 ## [0.4.1] 2019-06-28
 
