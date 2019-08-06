@@ -17,6 +17,8 @@ import (
 	"github.com/giantswarm/micrologger"
 	"github.com/spf13/afero"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	"github.com/giantswarm/kubernetes-node-exporter/integration/templates"
 )
 
 const (
@@ -108,7 +110,7 @@ func init() {
 			ChartConfig: managedservices.ChartConfig{
 				ChannelName:     fmt.Sprintf("%s-%s", env.CircleSHA(), testName),
 				ChartName:       chartName,
-				ChartValues:     "",
+				ChartValues:     templates.NodeExporterValues,
 				Namespace:       metav1.NamespaceSystem,
 				RunReleaseTests: true,
 			},
